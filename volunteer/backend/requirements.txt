@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+sqlalchemy
+aiomysql
+httpx
+groq
+python-dotenv
+apscheduler
+pydantic
