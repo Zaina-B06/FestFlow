@@ -3,7 +3,7 @@ import { volunteer } from "../data/mockData";
 import TopBar from "../components/layout/TopBar";
 import { BASE_URL, VOLUNTEER_ID } from "../config";
 
-export default function Dashboard() {
+export default function Dashboard({ setActivePage }) {
     const [available, setAvailable] = useState(true);
     const [events, setEvents] = useState([]);
     const [notifications, setNotifications] = useState([]);
@@ -109,7 +109,7 @@ export default function Dashboard() {
                                 <h2 style={{ fontSize: 18, fontWeight: 800, color: "#355872", margin: "0 0 4px" }}>Upcoming Events</h2>
                                 <p style={{ fontSize: 13, color: "#7AAACE", margin: 0 }}>Find opportunities to volunteer</p>
                             </div>
-                            <button style={{ background: "#F7F8F0", border: "1px solid #E8EDE8", borderRadius: 10, padding: "8px 16px", fontSize: 12, fontWeight: 700, color: "#355872", cursor: "pointer" }}>
+                            <button onClick={() => setActivePage("events")} style={{ background: "#F7F8F0", border: "1px solid #E8EDE8", borderRadius: 10, padding: "8px 16px", fontSize: 12, fontWeight: 700, color: "#355872", cursor: "pointer" }}>
                                 Browse all →
                             </button>
                         </div>
@@ -149,7 +149,7 @@ export default function Dashboard() {
                         <div style={{ background: "#fff", borderRadius: 16, border: "1px solid #E8EDE8", padding: "20px 22px" }}>
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
                                 <h3 style={{ fontSize: 15, fontWeight: 700, color: "#355872", margin: 0 }}>Recent Alerts</h3>
-                                <button style={{ background: "none", border: "none", fontSize: 12, color: "#7AAACE", fontWeight: 700, cursor: "pointer" }}>View all →</button>
+                                <button onClick={() => setActivePage("alerts")} style={{ background: "none", border: "none", fontSize: 12, color: "#7AAACE", fontWeight: 700, cursor: "pointer" }}>View all →</button>
                             </div>
                             {notifications.length === 0 && (
                                 <p style={{ fontSize: 13, color: "#7AAACE", textAlign: "center", padding: "10px 0" }}>No alerts yet.</p>
@@ -174,12 +174,12 @@ export default function Dashboard() {
                             <h3 style={{ fontSize: 15, fontWeight: 700, color: "#355872", margin: "0 0 16px" }}>Quick Actions</h3>
                             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                                 {[
-                                    { icon: "📅", label: "Browse Events", bg: "#EAF4FF", color: "#355872" },
-                                    { icon: "🕒", label: "My Schedule", bg: "#F0F6FF", color: "#7AAACE" },
-                                    { icon: "⚠️", label: "Report Issue", bg: "#FFF0F0", color: "#C0392B" },
-                                    { icon: "❓", label: "Get Help", bg: "#F7F8F0", color: "#355872" },
+                                    { icon: "📅", label: "Browse Events", bg: "#EAF4FF", color: "#355872", page: "events" },
+                                    { icon: "🕒", label: "My Schedule", bg: "#F0F6FF", color: "#7AAACE", page: "schedule" },
+                                    { icon: "⚠️", label: "Report Issue", bg: "#FFF0F0", color: "#C0392B", page: "tasks" },
+                                    { icon: "❓", label: "Get Help", bg: "#F7F8F0", color: "#355872", page: "help" },
                                 ].map((a, i) => (
-                                    <button key={i} style={{ background: a.bg, border: "none", borderRadius: 12, padding: "16px 10px", cursor: "pointer", textAlign: "center" }}>
+                                    <button key={i} onClick={() => setActivePage(a.page)} style={{ background: a.bg, border: "none", borderRadius: 12, padding: "16px 10px", cursor: "pointer", textAlign: "center" }}>
                                         <div style={{ fontSize: 20, marginBottom: 6 }}>{a.icon}</div>
                                         <p style={{ fontSize: 12, fontWeight: 700, color: a.color, margin: 0 }}>{a.label}</p>
                                     </button>

@@ -2,9 +2,15 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update
 from database import get_db
-from models.volunteer import Volunteer
+from models.volunteer import Volunteer, VolunteerSkill
+from pydantic import BaseModel
+from typing import Optional
 
 router = APIRouter(prefix="/volunteers", tags=["Volunteers"])
+
+class ProfileUpdate(BaseModel):
+    availability: Optional[str] = None
+    skills: Optional[str] = None
 
 @router.get("/{id}/profile")
 async def get_profile(id: int, db: AsyncSession = Depends(get_db)):
@@ -12,15 +18,36 @@ async def get_profile(id: int, db: AsyncSession = Depends(get_db)):
     volunteer = result.scalar_one_or_none()
     if not volunteer:
         raise HTTPException(status_code=404, detail="Volunteer not found")
-    return volunteer
+        
+    skills_res = await db.execute(select(VolunteerSkill).where(VolunteerSkill.volunteer_id == id))
+    skills_rec = skills_res.scalar_one_or_none()
+    
+    # We serialize the full profile
+    return {
+        "id": volunteer.id,
+        "name": volunteer.name,
+        "email": volunteer.email,
+        "phone": volunteer.phone,
+        "role": volunteer.role,
+        "availability": volunteer.availability,
+        "radio_channel": volunteer.radio_channel,
+        "skills": skills_rec.skills if skills_rec else "[]"
+    }
 
-@router.put("/{id}/availability")
-async def update_availability(id: int, status: str, db: AsyncSession = Depends(get_db)):
-    await db.execute(
-        update(Volunteer).where(Volunteer.id == id).values(availability=status)
-    )
+@router.put("/{id}/profile")
+async def update_profile(id: int, profile_update: ProfileUpdate, db: AsyncSession = Depends(get_db)):
+    if profile_update.availability is not None:
+        await db.execute(update(Volunteer).where(Volunteer.id == id).values(availability=profile_update.availability))
+        
+    if profile_update.skills is not None:
+        skills_res = await db.execute(select(VolunteerSkill).where(VolunteerSkill.volunteer_id == id))
+        if skills_res.scalar_one_or_none():
+            await db.execute(update(VolunteerSkill).where(VolunteerSkill.volunteer_id == id).values(skills=profile_update.skills))
+        else:
+            db.add(VolunteerSkill(volunteer_id=id, skills=profile_update.skills))
+            
     await db.commit()
-    return {"message": "Availability updated"}
+    return {"message": "Profile updated successfully"}
 
 @router.get("/{id}/stats")
 async def get_stats(id: int, db: AsyncSession = Depends(get_db)):

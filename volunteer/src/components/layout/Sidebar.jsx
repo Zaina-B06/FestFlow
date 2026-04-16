@@ -4,6 +4,7 @@ const navItems = [
   { id: "tasks", label: "Tasks", icon: "✓" },
   { id: "schedule", label: "Schedule", icon: "◷" },
   { id: "alerts", label: "Alerts", icon: "◎" },
+  { id: "profile", label: "Profile", icon: "👤" },
   { id: "help", label: "Help", icon: "?" },
 ];
 

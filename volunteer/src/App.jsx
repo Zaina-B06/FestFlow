@@ -6,8 +6,9 @@ import Schedule from "./pages/Schedule";
 import Alerts from "./pages/Alerts";
 import Help from "./pages/Help";
 import Events from "./pages/Events";
+import Profile from "./pages/Profile";
 
-const pages = { dashboard: Dashboard, events: Events, tasks: Tasks, schedule: Schedule, alerts: Alerts, help: Help };
+const pages = { dashboard: Dashboard, events: Events, tasks: Tasks, schedule: Schedule, alerts: Alerts, help: Help, profile: Profile };
 
 export default function App() {
   const [activePage, setActivePage] = useState("dashboard");
@@ -17,7 +18,7 @@ export default function App() {
     <div style={{ display: "flex", fontFamily: "'Inter', -apple-system, sans-serif", background: "#f9f9f9", minHeight: "100vh" }}>
       <Sidebar activePage={activePage} setActivePage={setActivePage} />
       <main style={{ marginLeft: 200, flex: 1, minHeight: "100vh" }}>
-        <PageComponent />
+        <PageComponent setActivePage={setActivePage} />
       </main>
     </div>
   );
